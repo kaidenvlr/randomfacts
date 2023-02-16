@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+  web:
+    build: ./
+    command: bash -c "python manage.py collectstatic --no-input && python manage.py migrate && python manage.py create_superuser && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/usr/src/app/
+      - ./static_files:/usr/src/app/static/
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    restart: on-failure
+
+  db:
+    image: postgres:14-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=djangoconnect
+      - POSTGRES_PASSWORD=django
+      - POSTGRES_DB=randomfact
+  redis:
+    image: redis:alpine
+
+  celery-worker:
+    build: ./
+    command: celery -A apps.parser.configs worker -l info
+    depends_on:
+      - redis
+    restart: on-failure
+
+  celery-beat:
+    build: ./
+    command: celery -A apps.parser.configs beat -l info
+    depends_on:
+      - redis
+    restart: on-failure
+
+
+volumes:
+  postgres_data:
+  static_files:
