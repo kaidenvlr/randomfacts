@@ -3,7 +3,7 @@ version: '3.7'
 services:
   web:
     build: ./
-    command: bash -c "python manage.py collectstatic --no-input && python manage.py migrate && python manage.py create_superuser && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py collectstatic --no-input && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/usr/src/app/
       - ./static_files:/usr/src/app/static/
@@ -26,14 +26,14 @@ services:
 
   celery-worker:
     build: ./
-    command: celery -A apps.parser.configs worker -l info
+    command: celery -A randomfacts worker -l info
     depends_on:
       - redis
     restart: on-failure
 
   celery-beat:
     build: ./
-    command: celery -A apps.parser.configs beat -l info
+    command: celery -A randomfacts beat -l info
     depends_on:
       - redis
     restart: on-failure
