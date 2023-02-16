@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'randomfacts.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgres',
+        'ENGINE': 'django.db.backends.postgresql',
         'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT'),
         'USER': os.getenv('DB_USER'),
